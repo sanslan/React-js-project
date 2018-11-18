@@ -1,26 +1,50 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route} from "react-router-dom";
 
+import 'bulma';
+import './App.css';
+import Header from './components/Header';
+import BooksList from './components/BooksList';
+import AddBook from './components/AddBook';
+import Signup from './components/Signup';
+import Signin from './components/Signin';
+import Footer from './components/Footer';
 class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.isRegisteredHandler = this.isRegisteredHandler.bind(this);
+    this.isLoggedinHandler = this.isLoggedinHandler.bind(this);
+    this.state = {
+      isRegistered: false,
+      isLoggedin: false,
+      token: ''
+    }
+  }
+  isRegisteredHandler(){
+    this.setState({
+      isRegistered: true
+    });
+  }
+  isLoggedinHandler(token){
+    this.setState({
+      isLoggedin: true,
+      token: token
+    });
+  }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+        <Router>
+          <div>
+            <Header isLoggedin={ this.state.isLoggedin }/>
+            { !this.state.isLoggedin && <Route exact path="/signup" component={() => <Signup isRegisteredHandler={ this.isRegisteredHandler } isRegistered={this.state.isRegistered}/>} />}
+            { !this.state.isLoggedin && <Route exact path="/signin" component={() => <Signin isLoggedinHandler={ this.isLoggedinHandler } />} />}
+            { this.state.isLoggedin && <Route exact path="/addbook" component={() => <AddBook isLoggedinHandler={ this.isLoggedinHandler } />} />}
+            { this.state.isLoggedin && <Route exact path="/books" component={() => <BooksList token={ this.state.token } />} />}
+            <Footer/>
+          </div>
+        </Router>
+    
     );
   }
 }
