@@ -53,8 +53,8 @@ export default class Signup extends Component{
     render(){
         if(this.props.isRegistered){
             return (
-                <article class="message is-primary">
-                    <div class="message-body">
+                <article className="message is-primary">
+                    <div className="message-body">
                         Already Registered. Please <Link to='/signin'>Sign in</Link>
                     </div>
                 </article>

@@ -1,10 +1,7 @@
 import React, { Component} from 'react';
 import { Redirect } from "react-router-dom";
 import { post } from 'axios';
-let initialState = {
-    name : '',
-    password: ''
-};
+
 export default class Signup extends Component{
 
     constructor(props) {
@@ -13,10 +10,13 @@ export default class Signup extends Component{
 
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.signin = this.signin.bind(this);
+        this.handleSignin = this.handleSignin.bind(this);
 
-        this.state = initialState;
-        this.state = {isRegistered: false}
+        this.state = {
+            email : '',
+            password: '',
+        };
+
     }
     handleEmailChange(e){
         this.setState({ email: e.target.value });
@@ -24,7 +24,7 @@ export default class Signup extends Component{
     handlePasswordChange(e){
         this.setState({ password: e.target.value });
     }
-    signin(e){
+    handleSignin(e){
 
         e.preventDefault();
         const url = 'http://reading.loc/api/login';
@@ -38,21 +38,26 @@ export default class Signup extends Component{
             }
         }
         return  post(url, formData,config).then((data) =>{
-            console.log(data.data.access_token)
-            this.props.isLoggedinHandler(data.data.access_token);
+            //console.log(data)
+            if(data.status === 200){
+                this.props.isLoggedinHandler(data.data.access_token);
+            }
+            
+        }).catch((data) =>{
+            console.log(data)
         });
         
 
     }
     render(){
         return (
-            <form  className='add-book' onSubmit={ this.signin }>
+            <form  className='add-book' onSubmit={ this.handleSignin }>
                 <h2 className="title is-2 has-text-centered">Sign in</h2>
 
                 <div className="field">
                     <label className="label">Email</label>
                     <div className="control">
-                        <input value={ this.state.email } onChange={ this.handleEmailChange } className="input" type="text" placeholder="Full name"/>
+                        <input  onChange={ this.handleEmailChange } value={ this.state.email } className="input" type="text" placeholder="Full name"/>
                     </div>
                 </div>
 

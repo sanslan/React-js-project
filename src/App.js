@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route} from "react-router-dom";
+import { BrowserRouter as Router,Redirect, Route} from "react-router-dom";
 
 import 'bulma';
 import './App.css';
@@ -8,6 +8,7 @@ import BooksList from './components/BooksList';
 import AddBook from './components/AddBook';
 import Signup from './components/Signup';
 import Signin from './components/Signin';
+import Signout from './components/Signout';
 import Footer from './components/Footer';
 class App extends Component {
 
@@ -15,10 +16,11 @@ class App extends Component {
     super(props);
     this.isRegisteredHandler = this.isRegisteredHandler.bind(this);
     this.isLoggedinHandler = this.isLoggedinHandler.bind(this);
+    this.signOutHandler = this.signOutHandler.bind(this);
     this.state = {
       isRegistered: false,
       isLoggedin: false,
-      token: ''
+      token: null
     }
   }
   isRegisteredHandler(){
@@ -32,6 +34,13 @@ class App extends Component {
       token: token
     });
   }
+  signOutHandler(token){
+    this.setState({
+      isLoggedin: false,
+      token: null
+    });
+    return <Redirect to="/login"/>
+  }
   render() {
     return (
         <Router>
@@ -39,6 +48,7 @@ class App extends Component {
             <Header isLoggedin={ this.state.isLoggedin }/>
             { !this.state.isLoggedin && <Route exact path="/signup" component={() => <Signup isRegisteredHandler={ this.isRegisteredHandler } isRegistered={this.state.isRegistered}/>} />}
             { !this.state.isLoggedin && <Route exact path="/signin" component={() => <Signin isLoggedinHandler={ this.isLoggedinHandler } />} />}
+            { this.state.isLoggedin && <Route exact path="/signout" component={() => <Signout signOutHandler={ this.signOutHandler } />} />}
             { this.state.isLoggedin && <Route exact path="/addbook" component={() => <AddBook isLoggedinHandler={ this.isLoggedinHandler } />} />}
             { this.state.isLoggedin && <Route exact path="/books" component={() => <BooksList token={ this.state.token } />} />}
             <Footer/>

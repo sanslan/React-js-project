@@ -21,7 +21,7 @@ export default class Header extends Component{
                                 <div>
                                     { !this.props.isLoggedin && <NavLink className='button is-light' activeClassName="is-primary" to="/signup"><strong>Sign up</strong></NavLink>}
                                     { !this.props.isLoggedin && <NavLink className='button is-light' activeClassName="is-primary" to="/signin"><strong>Sign in</strong></NavLink>}
-                                    { this.props.isLoggedin && <NavLink className='button is-light' activeClassName="is-primary" to="/logout"><strong>Logout</strong></NavLink>}
+                                    { this.props.isLoggedin && <NavLink className='button is-light' activeClassName="is-primary" to="/signout"><strong>Logout</strong></NavLink>}
                                 </div>                
                             </div>
                         </div>
