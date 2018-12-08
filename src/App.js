@@ -10,6 +10,8 @@ import Signup from './components/Signup';
 import Signin from './components/Signin';
 import Signout from './components/Signout';
 import Footer from './components/Footer';
+
+
 class App extends Component {
 
   constructor(props){
@@ -46,11 +48,11 @@ class App extends Component {
         <Router>
           <div>
             <Header isLoggedin={ this.state.isLoggedin }/>
-            { !this.state.isLoggedin && <Route exact path="/signup" component={() => <Signup isRegisteredHandler={ this.isRegisteredHandler } isRegistered={this.state.isRegistered}/>} />}
-            { !this.state.isLoggedin && <Route exact path="/signin" component={() => <Signin isLoggedinHandler={ this.isLoggedinHandler } />} />}
-            { this.state.isLoggedin && <Route exact path="/signout" component={() => <Signout signOutHandler={ this.signOutHandler } />} />}
-            { this.state.isLoggedin && <Route exact path="/addbook" component={() => <AddBook isLoggedinHandler={ this.isLoggedinHandler } />} />}
-            { this.state.isLoggedin && <Route exact path="/books" component={() => <BooksList token={ this.state.token } />} />}
+            <Route exact path="/signup" component={() => <Signup isRegisteredHandler={ this.isRegisteredHandler } isRegistered={this.state.isRegistered}/>} />
+            <Route exact path="/signin" component={() => <Signin isLoggedin={ this.state.isLoggedin } isLoggedinHandler={ this.isLoggedinHandler } />} />
+            <Route exact path="/signout" component={() => <Signout signOutHandler={ this.signOutHandler } />} />
+            <Route exact path="/addbook" component={() => <AddBook token={ this.state.token }  isLoggedinHandler={ this.isLoggedinHandler } />} />
+            <Route exact path="/books" component={() => <BooksList token={ this.state.token } />} />
             <Footer/>
           </div>
         </Router>

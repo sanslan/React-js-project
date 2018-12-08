@@ -1,11 +1,8 @@
 import React, { Component} from 'react';
 import { Link } from "react-router-dom";
-import { post } from 'axios';
-let initialState = {
-    name : '',
-    email: '',
-    password: ''
-};
+import axios from '../axios/axios';
+import loading from '../loading.gif';
+
 export default class Signup extends Component{
 
     constructor(props) {
@@ -17,8 +14,14 @@ export default class Signup extends Component{
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.signup = this.signup.bind(this);
 
-        this.state = initialState;
-        this.state = {isRegistered: false}
+        this.state = {
+            name : '',
+            email: '',
+            password: '',
+            isRegistered: false,
+            errors: [],
+            registerIsInProcess: false
+        };
     }
     handleNameChange(e){
         this.setState({ name: e.target.value });
@@ -32,67 +35,75 @@ export default class Signup extends Component{
     signup(e){
 
         e.preventDefault();
-        const url = 'http://reading.loc/api/register';
+        this.setState({registerIsInProcess: true})
         const formData = new FormData();
         formData.append('name',this.state.name);
         formData.append('email',this.state.email);
         formData.append('password',this.state.password);
 
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data',
-            }
-        }
-        return  post(url, formData,config).then(() =>{
-            this.setState(initialState);
-            this.props.isRegisteredHandler();
-        });
-        
+        axios.post('register', formData)
+            .then(() =>{
+                this.setState({
+                    registerIsInProcess: false,
+                    isRegistered: true,
+                    errors: [],
+                    name : '',
+                    email: '',
+                    password: ''
+                })
+            })
+            .catch((error) =>{
+                this.setState({ test: typeof error.response.data.errors})
+                this.setState({ errors: Object.values(error.response.data.errors)})
+                this.setState({registerIsInProcess: false})
+            })   
 
     }
     render(){
-        if(this.props.isRegistered){
-            return (
-                <article className="message is-primary">
-                    <div className="message-body">
-                        Already Registered. Please <Link to='/signin'>Sign in</Link>
+ 
+        return (
+            <form  className='register' onSubmit={ this.signup }>
+                <h2 className="title is-2 has-text-centered">Sign up</h2>
+
+                <div className="field">
+                    <label className="label">Name</label>
+                    <div className="control">
+                        <input value={ this.state.name } onChange={ this.handleNameChange } className="input" type="text" placeholder="Full name"/>
                     </div>
-                </article>
-            )
-        } else{
-            return (
-                <form  className='add-book' onSubmit={ this.signup }>
-                    <h2 className="title is-2 has-text-centered">Sign up</h2>
-    
-                    <div className="field">
-                        <label className="label">Name</label>
-                        <div className="control">
-                            <input value={ this.state.name } onChange={ this.handleNameChange } className="input" type="text" placeholder="Full name"/>
-                        </div>
+                </div>
+
+                <div className="field">
+                    <label className="label">Email</label>
+                    <div className="control">
+                        <input value={ this.state.email } rows='5'  onChange={ this.handleEmailChange } className="input" type="text" placeholder="Email"/>
                     </div>
-    
-                    <div className="field">
-                        <label className="label">Email</label>
-                        <div className="control">
-                            <input value={ this.state.email } rows='5'  onChange={ this.handleEmailChange } className="input" type="text" placeholder="Email"/>
-                        </div>
+                </div>
+
+                <div className="field">
+                    <label className="label">Password</label>
+                    <div className="control">
+                        <input placeholder="password" onChange={ this.handlePasswordChange } value={ this.state.password } className="input" type="password"/>
                     </div>
-    
-                    <div className="field">
-                        <label className="label">Password</label>
-                        <div className="control">
-                            <input placeholder="password" onChange={ this.handlePasswordChange } value={ this.state.password } className="input" type="password"/>
-                        </div>
+                </div>
+                <div className="field is-grouped">
+                    <div className="control">
+                        <button className="button is-link">Sign up</button>{ this.state.registerIsInProcess && <img className='loading' alt='loading' src={loading}/> }
                     </div>
-    
-                    <div className="field is-grouped">
-                        <div className="control">
-                            <button className="button is-link">Submit</button>
-                        </div>
-                    </div>
-                </form>
-            )
-        }
+                </div>
+                { (this.state.errors.length !== 0)  && <div><article className="message is-danger"><div className="message-body">{ this.state.errors.map((error)=>{
+                    return (
+                        <p>{ error }</p>
+                    )
+                } )}</div></article></div>
+                }
+                { this.state.isRegistered && <article className="message is-success">
+                <div className="message-body">
+                    You registered successfully. Please <Link to='/signin'>login here</Link>
+                </div>
+            </article>}
+            </form>
+            
+        )
    
     }
 
